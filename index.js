@@ -1,8 +1,13 @@
+const mongoose = require('mongoose');
 const home = require('./routes/home');
 const genres = require('./routes/genres');
-
 const express = require('express');
 const app = express();
+
+mongoose.connect('mongodb://localhost/vidly-app')
+    .then(() => console.log('Connected to vidly-app database'))
+    .catch((err) => console.log('Error connecting to vidly-app database', err));
+
 
 app.use(express.json());
 app.use('/', home);

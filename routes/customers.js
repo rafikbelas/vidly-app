@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     const { error } = validate(req.body);
-    if (error) return res.status(404).send(error.details[0].message);
+    if (error) return res.status(400).send(error.details[0].message);
 
     let customer = new Customer({
         isGold: req.body.isGold,
@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     const { error } = validate(req.body);
-    if (error) return res.status(404).send(error.details[0].message);
+    if (error) return res.status(400).send(error.details[0].message);
 
     const customer = await Customer.findByIdAndUpdate(req.params.id, 
     {
@@ -38,7 +38,7 @@ router.put('/:id', async (req, res) => {
     res.send(customer);
 });
 
-router.delete('/:id', async (res) => {
+router.delete('/:id', async (req, res) => {
     const customer = await Customer.findByIdAndRemove(req.params.id);
    
     if(!customer) return res.status(404).send('No customer with this ID');
@@ -47,10 +47,10 @@ router.delete('/:id', async (res) => {
 });
 
 router.get('/:id', async (req, res) => {
+    // TODO might fail if id is not of type ObjectId
+    // Exception is:  CastError: Cast to ObjectId failed for value
     const customer = await Customer.findById(req.params.id);
-   
     if(!customer) return res.status(404).send('No customer with this ID');
-   
     res.send(customer);
 });
 

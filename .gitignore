@@ -1,4 +1,6 @@
 # Dependency directories
 node_modules/
 
+# Log files
 logfile.log
+uncaughtExceptions.log

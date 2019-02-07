@@ -1,3 +1,7 @@
+require('express-async-errors');
+const winston = require('winston');
+require('winston-mongodb');
+const error = require('./middleware/error');
 const config = require('config');
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
@@ -11,6 +15,36 @@ const users = require('./routes/users');
 const auth = require('./routes/auth');
 const express = require('express');
 const app = express();
+
+// process.on('uncaughtException', (ex) => {
+//     winston.error(ex.message, ex);
+//     process.exit(1);
+// });
+
+winston.handleExceptions(
+    new winston.transports.File({ filename: 'uncaughtExceptions.log' }));
+
+process.on('unhandledRejection', (ex) => {
+    throw ex;
+});
+
+winston.add(winston.transports.File, { filename: 'logfile.log' });
+// winston.add(winston.transports.MongoDB, { 
+//     db: 'mongodb://localhost/vidly-app',
+//     level: 'error'
+//     //if we set to info, it will log error, warn and info.
+//     // error
+//     // warn
+//     // info
+//     // verbose
+//     // debug
+//     // silly
+// });
+
+// throw new Error('Faking an error');
+
+const p = Promise.reject(new Error('Something failed miserabely!'));
+p.then(() => console.log('Done'));
 
 if (!config.get('jwtPrivateKey')) {
     console.error('FATAL ERROR: jwtPrivateKey is not defined');
@@ -29,6 +63,8 @@ app.use('/api/movies', movies);
 app.use('/api/rentals', rentals);
 app.use('/api/users', users);
 app.use('/api/auth', auth);
+
+app.use(error);
 
 const port = process.env.port || 5000
 app.listen(port, () => console.log(`Listenning to port ${port}`));

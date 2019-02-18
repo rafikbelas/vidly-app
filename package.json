@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --env=node --colors --watchAll --verbose test"
+    "test": "jest --env=node --colors --watchAll --verbose --coverage test"
   },
   "keywords": [],
   "author": "",
